@@ -1,0 +1,21 @@
+* {
+    padding: 0;
+    margin: 0;
+}
+
+header {
+    background-color: navy;
+    color: rgb(241, 230, 230);
+    font-size: 30px;
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+    text-align: center;
+}
+
+.form {
+    margin: 20px;
+    padding: 20px;
+}
+
+#cities {
+    display: none;
+}

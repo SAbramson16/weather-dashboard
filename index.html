@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Weather Dashboard</title>
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+    <link rel="stylesheet" href="./assets/css/stylesheet.css">
+</head>
+<body>
+    <header><h1>Weather Dashboard</h1></header>
+    <div class="form">
+        <form id="search-form"><h2>Search for a City</h2></form>
+        <input id="search-input" type="text" placeholder="Enter city name">
+        <button id="submitBtn" class ='btn'>Search</button>
+        <button id="clearBtn" class="btn">Clear List</button>
+    </div>
+
+    <div>
+        <form action="" method="post">
+            <select name="id" id="cities" onchange="javacript:chooseCity()">
+                <!-- <option selected="selected" value ="">Select City</option> -->
+                <!-- <option id="cityOption0" value ="0"></option>
+                <option id="cityOption1" value ="1"></option>
+                <option id="cityOption2" value ="2"></option>
+                <option id="cityOption3" value ="3"></option>
+                <option id="cityOption4" value ="4"></option> -->
+            </select>
+            <!-- <input type="submit" name="submit" value="submit"> -->
+        </form>
+    </div>
+
+    <div>
+        <ul id="cityList">
+            <li id="savedCities"></li>
+        </ul>
+    </div>
+
+    
+    <script src="./assets/js/script.js"></script>
+</body>
+</html>
