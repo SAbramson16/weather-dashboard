@@ -5,19 +5,36 @@ let chosenCity = document.getElementById('search-input');
 let submitBtn = document.getElementById('submitBtn'); 
 let clearBtn = document.getElementById('clearBtn');
 let cities = document.getElementById('cities');
-
+let forecast = document.getElementById('forecast');
+let today = document.getElementById('today')
 
 let limit = 5;
+
 let savedCities = [];
 let cityOptionsList = [];
+
+let cityInfo = {
+    lon: 0,
+    lat: 0,
+    cityName: ""
+}
+
+const dayNames = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
 
 submitBtn.addEventListener('click', userSearch);
 clearBtn.addEventListener('click', clearList);
 
+//have the saved previously searched cities populate upon page load
 function init () {
-    savedCities = JSON.parse(localStorage.getItem("savedCities")) || [];
+    getStoredCities();
+    showCityList();
 }
 
+function getStoredCities() {
+    savedCities = JSON.parse(localStorage.getItem("storageSavedCities")) || [];
+}
+
+//alert user if they do not input any data into the field
 function userSearch(){
     let city = chosenCity.value.trim();
     console.log('chosenCity -> ', city);
@@ -27,24 +44,49 @@ function userSearch(){
     else {
         citySearch(city);
     }
-
-    // submitSearch();
 }
+
 
 function chooseCity() {
     cities.setAttribute('style', 'display: none');
-    // let value = cities.value;
+
+    let isDoubled = false;
     let selectedCityIndex = cities.selectedIndex-1;
     let lon = cityOptionsList[selectedCityIndex].lon;
     let lat = cityOptionsList[selectedCityIndex].lat;
-    callQuery(lon, lat);
-    console.log('here');
+    let cityName = cityOptionsList[selectedCityIndex].name;
+
+    getStoredCities();
+
+    //add condition to check if two of the same cities are being saved into local storage
+    for (let i = 0; i < savedCities.length; i++) {
+        let city = savedCities[i];
+        if (city.cityName == cityName) {
+            isDoubled = true;
+            break;
+        }
+    }
+
+    if (!isDoubled) {
+        cityInfo.lon = lon;
+        cityInfo.lat = lat;
+        cityInfo.cityName = cityName;
+        
+        savedCities.push(cityInfo);
+        localStorage.setItem("storageSavedCities", JSON.stringify(savedCities));
+    }
+
+    showCityList();
+    getTodaysWeather(lon, lat, cityName);
+    getFiveDayCast(lon, lat);
 }
 
+
+//API call to get city name
 function citySearch(cityName){
-    let coordinatesAPI = 'http://api.openweathermap.org/geo/1.0/direct?q=' + cityName + '&limit=' + limit + '&appid=' + '45f42fe1e7919a2ec27993b0a0b90a7e';
+    let coordinatesAPI = 'https://api.openweathermap.org/geo/1.0/direct?q=' + cityName + '&limit=' + limit + '&appid=' + '45f42fe1e7919a2ec27993b0a0b90a7e';
     
-    fetch (coordinatesAPI, {
+    fetch(coordinatesAPI, {
     method: 'GET'
     })
     .then(function (response) {
@@ -61,75 +103,108 @@ function citySearch(cityName){
             let option = document.createElement("option");
             option.textContent = cityOptionsList[i].name + ', ' + cityOptionsList[i].state + ', ' + cityOptionsList[i].country; 
             cities.appendChild(option);
-            // cities.options[i+1].text = cityOptionsList[i].name + ', ' + cityOptionsList[i].state + ', ' + cityOptionsList[i].country; 
         }
         cities.setAttribute('style', 'display: block');
-        console.log(cityOptionsList[0]);
     });
 }
 
-function callQuery(lon, lat) {
+//populate todays weather information 
+function getTodaysWeather(lon, lat, cityName) {
+    let queryURL = 'https://api.openweathermap.org/data/2.5/weather?units=metric&lat=' + lat + '&lon=' + lon + '&appid=' + '45f42fe1e7919a2ec27993b0a0b90a7e';
+    fetch(queryURL, {
+        method: 'GET'
+    })
+    .then(function (response) {
+        return response.json();
+    })
+    .then(function (data) {
+        let todayWeatherCity = document.getElementById('today-weather-city')
+        let getDay = String(new Date());
+        let dateOnly = getDay.split(" ");
+    
+        todayWeatherCity.textContent = cityName + " (" + dateOnly[0] + ", " + dateOnly[1] + " " + dateOnly[2] + ")";
+
+        let temperature = document.getElementById('temp');
+        temperature.textContent='Temp: ' + data.main.temp;
+        let wind = document.getElementById('wind');
+        wind.textContent='Wind Speed: ' + data.wind.speed;
+        let humidity = document.getElementById('humidity');
+        humidity.textContent='Humidity: ' + data.main.humidity + "%";
+    } )
+}
+
+//API call to get forecast for a selected city based on its latitude and longitude
+function getFiveDayCast(lon, lat) {
     let queryURL = 'https://api.openweathermap.org/data/2.5/forecast?units=metric&lat=' + lat + '&lon=' + lon + '&appid=' + '45f42fe1e7919a2ec27993b0a0b90a7e';
-    console.log(queryURL);
-    fetch (queryURL, {
+    
+    forecast.setAttribute('style', 'display: block');
+
+    fetch(queryURL, {
         method: 'GET'
         })
         .then(function (response) {
             return response.json();
         }).then( function(data) {
             let daysList = data.list;
-            console.log(data);
+            
             for (let i=0; i < daysList.length; i+=8) {
-                console.log("TEMP FOR: " + daysList[i].dt_txt + " is - " + daysList[i].main.temp);
+                let j=i/8; 
+                let dateOnly = daysList[i].dt_txt;
+                dateOnly = dateOnly.split(" ");
+                dateOnly = dateOnly[0];
+                let getDay = new Date(dateOnly);
+                let day = getDay.getDay();
+                let date = document.getElementById('date' + j);
+                date.textContent = dateOnly;
+                let dayOfWeek = document.getElementById('day' + j);
+                dayOfWeek.textContent = dayNames[day];
+                let temperature = document.getElementById('temp' + j);
+                temperature.textContent='Temp: ' + daysList[i].main.temp;
+                let wind = document.getElementById('wind' + j);
+                wind.textContent='Wind Speed: ' + daysList[i].wind.speed;
+                let humidity = document.getElementById('humidity' + j);
+                humidity.textContent='Humidity: ' + daysList[i].main.humidity + "%";
             }
             
-            // data.list.forEach(function(eachData))
+            
         });
 }    
 
-// chosenCity = JSON.parse(localStorage.getItem("savedCities"));
-
-// localStorage.setItem("savedCities", JSON.stringify(savedCities));
-
+//adds previously searched cities into a list on the page, make each list item a button to be clicked
 function showCityList() {
     cityList.innerHTML = "";
 
     for (let i = 0; i < savedCities.length; i++) { 
-    }
-    console.log(cityList);
-    let li = document.createElement("li");
-    li.textContent = chosenCity
+        selectedCity = savedCities[i];
 
-    cityList.appendChild(li);
+        let li = document.createElement("li");
+        let button = document.createElement("button");
+        button.textContent = selectedCity.cityName;
+        button.setAttribute('data-index', i);
+        button.setAttribute('id', "savedListButton" + i);
+        li.appendChild(button);
+        cityList.appendChild(li);
+
+        listButton = document.getElementById("savedListButton"+i);
+        listButton.addEventListener('click', showSavedCityWeather);
+    }    
+}
+
+function showSavedCityWeather(event) {
+    let currentChoiceIndex = event.currentTarget.getAttribute("data-index");
+
+    let lon = savedCities[currentChoiceIndex].lon;
+    let lat = savedCities[currentChoiceIndex].lat;
+    let cityName = savedCities[currentChoiceIndex].cityName;
+
+    getTodaysWeather(lon, lat, cityName);
+    getFiveDayCast(lon, lat);
 }
 
 function clearList() {
-    
     savedCities = [];
-    localStorage.setItem("savedCities", JSON.stringify(savedCities));
+    localStorage.setItem("storageSavedCities", JSON.stringify(savedCities));
     showCityList();
 }
 
-
 init();
-
-//create elements from javascript
-//create array with data i want to loop - will give index number
-
-//create a global empty array and asign array into a variable
-
-//add event listener to search button 
-//innerHTML
-
-//get city names and save to local storage - local storage is an object - key and value pair
-//set item happens when response comes back from API - set item accepts two arguements, 1. the key and 2. the value
-//can be an array of strings or objects, i
-//save the name of the city, use the name of the city
-//if user types city twice, don't save it twice
-
-
-//display city name with todays date and weather
-//use every 8 indexes to get the 5 day forecast
-
-//display 5 day weather forcast, add icons and dates
-

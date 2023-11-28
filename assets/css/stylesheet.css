@@ -3,6 +3,10 @@
     margin: 0;
 }
 
+body {
+    padding: 20px
+}
+
 header {
     background-color: navy;
     color: rgb(241, 230, 230);
@@ -11,11 +15,34 @@ header {
     text-align: center;
 }
 
-.form {
-    margin: 20px;
-    padding: 20px;
-}
 
 #cities {
     display: none;
+}
+
+#forecast {
+    display: none;
+}
+
+.fiveDayCast {
+    display: inline-block;
+}
+
+.row {
+    padding-bottom: 20px;
+}
+
+.btn {
+    background-color: gray;
+    color: whitesmoke;
+    padding: 5px;
+    margin: 1px;
+}
+
+.selectCity {
+    margin-left: 30px;
+}
+
+ul {
+    list-style-type: none;
 }

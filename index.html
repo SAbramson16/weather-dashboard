@@ -4,38 +4,84 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Weather Dashboard</title>
-    <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+    <!-- <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script> -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="./assets/css/stylesheet.css">
 </head>
 <body>
     <header><h1>Weather Dashboard</h1></header>
-    <div class="form">
-        <form id="search-form"><h2>Search for a City</h2></form>
-        <input id="search-input" type="text" placeholder="Enter city name">
-        <button id="submitBtn" class ='btn'>Search</button>
-        <button id="clearBtn" class="btn">Clear List</button>
+    <div class="col-sm-2 align-items-end">
+        <section class="row">
+            <div class="form">
+                <form id="search-form"><h3>Search for a City</h3></form>
+                <input id="search-input" type="text" placeholder="Enter city name">
+                <button id="submitBtn" class ='btn'>Search</button>
+                <button id="clearBtn" class="btn">Clear List</button>
+                
+            </div>
+            <div class="selectCity">
+                <form action="" method="post">
+                    <select name="id" id="cities" onchange="javacript:chooseCity()"></select>
+                </form>
+            </div>
+        </section>
+
+        <section class="list row">
+            <ul id="cityList">
+            </ul>
+        </section>
+        
     </div>
 
-    <div>
-        <form action="" method="post">
-            <select name="id" id="cities" onchange="javacript:chooseCity()">
-                <!-- <option selected="selected" value ="">Select City</option> -->
-                <!-- <option id="cityOption0" value ="0"></option>
-                <option id="cityOption1" value ="1"></option>
-                <option id="cityOption2" value ="2"></option>
-                <option id="cityOption3" value ="3"></option>
-                <option id="cityOption4" value ="4"></option> -->
-            </select>
-            <!-- <input type="submit" name="submit" value="submit"> -->
-        </form>
-    </div>
+    <div class="col-sm-10">
+        <section class="row align-items-end">
+            <card id="todays-weather-card">
+                <h2 id="today-weather-city"></h2><img id="card-image-weather">
+                <p id="temp"></p>
+                <p id="wind"></p>
+                <p id="humidity"></p>
+            </card>
+        </section>
 
-    <div>
-        <ul id="cityList">
-            <li id="savedCities"></li>
-        </ul>
+        <div class='row' id="forecast">
+            <section  class="col-sm-2 fiveDayCast">
+                <h5 id="day0">day 1</h5>
+                <h6 id="date0"></h6>
+                <p id="temp0"></p>
+                <p id="wind0"></p>
+                <p id="humidity0"></p>
+            </section>
+            <section class="col-sm-2 fiveDayCast">
+                <h5 id="day1"> day 2</h5>
+                <h6 id="date1"></h6>
+                <p id="temp1"></p>
+                <p id="wind1"></p>
+                <p id="humidity1"></p>
+            </section>
+            <section class="col-sm-2 fiveDayCast">
+                <h5 id="day2"> day 2</h5>
+                <h6 id="date2"></h6>
+                <p id="temp2"></p>
+                <p id="wind2"></p>
+                <p id="humidity2"></p>
+            </section>
+            <section class="col-sm-2 fiveDayCast">
+                <h5 id="day3"> day 4 </h5>
+                <h6 id="date3"></h6>
+                <p id="temp3"></p>
+                <p id="wind3"></p>
+                <p id="humidity3"></p>
+            </section>
+            <section class="col-sm-2 fiveDayCast">
+                <h5 id="day4"> day 5</h5>
+                <h6 id="date4"></h6>
+                <p id="temp4"></p>
+                <p id="wind4"></p>
+                <p id="humidity4"></p>
+            </section>
+        </div>
+    
     </div>
-
     
     <script src="./assets/js/script.js"></script>
 </body>
